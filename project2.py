@@ -7,13 +7,23 @@ import re
 def read_codons(file):
 
 
-    newfile = open(file, "r")
+    regexpattern = r"^[A-Z][a-zA-Z]* : ([AGCU]*+{\d}[AGCU]+}, )*[AGCU]+{\d}?"
 
-    data = newfile.read()
+    parts = []
 
-    datalist = data.split("\n")
+    with open(file, 'r') as file:
+            for line in file:
+                
+                match = re.match(regexpattern, line.strip())
 
-    newfile.close()
+                if match:
+                    parts = line.strip().split(': ')
+                    name = parts[0]
+                    sequences = parts[1].split(', ')
+
+                    
+
+   
 
 
 
