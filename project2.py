@@ -13,7 +13,7 @@ def read_codons(codon_file):
 
     match = re.match(regexpattern, line.strip())
 
-    if match:
+      if match:
         parts = line.strip().split(': ')
         name = parts[0]
         sequences = parts[1].split(', ')
