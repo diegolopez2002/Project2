@@ -3,7 +3,7 @@ from functools import reduce
 
 def read_codons(codon_file):
   # This will open a file with a given path (codon_file)
-  file = open(codon_file)
+  file = open(codon_file, "r")
 
   
   # Iterates through a file, storing each line in the line variable
