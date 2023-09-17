@@ -17,6 +17,8 @@ def read_codons(codon_file):
         parts = line.strip().split(': ')
         name = parts[0]
         sequences = parts[1].split(', ')
+
+  return name
         
     
 
