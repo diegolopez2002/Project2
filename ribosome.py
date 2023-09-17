@@ -3,26 +3,25 @@ from functools import reduce
 
 def read_codons(codon_file):
   # This will open a file with a given path (codon_file)
-  file = open(codon_file, "r")
+    file = open(codon_file, "r")
 
-  
+    pattern = []
   # Iterates through a file, storing each line in the line variable
-  for line in file:
+    for line in file:
     # Insert code here
-    regexpattern = r"^[A-Z][a-zA-Z]*: (([AGCU]*+{\d}[AGCU]+}, )*[AGCU]+{\d})$"
+        regexpattern = r"^[A-Z][a-zA-Z]* : ([AGCU]*+{\d}[AGCU]+}, )*[AGCU]+{\d}?"
 
-    match = re.match(regexpattern, line.strip())
+        match = re.match(regexpattern, line.strip())
 
-      if match:
-        parts = line.strip().split(': ')
-        name = parts[0]
-        sequences = parts[1].split(', ')
+        if match:
+            parts = line.strip().split(': ')
+            name = parts[0]
+            sequences = parts[1].split(', ')
 
-  return name
-        
+            for s in sequences:
+               pass
     
-
-
+    return pattern
 
 def read_evals(eval_file):
   # This will open a file with a given path (eval_file)
