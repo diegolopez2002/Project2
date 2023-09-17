@@ -9,7 +9,7 @@ def read_codons(codon_file):
   # Iterates through a file, storing each line in the line variable
     for line in file:
     # Insert code here
-        regexpattern = r'^[A-Z][a-zA-Z]*:\s(([AGUC]+{(\d+)},\s)*[AGUC]+{(\d+)})$'
+        regexpattern = r"^[A-Z][a-zA-Z]* : ([AGCU]*+{\d}[AGCU]+}, )*[AGCU]+{\d}?"
 
         match = re.match(regexpattern, line.strip())
 
@@ -18,8 +18,17 @@ def read_codons(codon_file):
             name = parts[0]
             sequences = parts[1].split(', ')
 
-            for s in sequences:
-               pass
+            final = []
+            for newsequence in sequences:
+               x = re.match('([AGUC]+){(\d+)}', newsequence)
+               if x:
+                  ribbase = x.group(1)
+                  repeat = int(x.group(2))
+                  final.append(ribbase * repeat)
+
+            
+            pattern.append((name, " ".join(final)))
+
     
     return pattern
 
