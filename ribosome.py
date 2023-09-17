@@ -9,7 +9,7 @@ def read_codons(codon_file):
   # Iterates through a file, storing each line in the line variable
     for line in file:
     # Insert code here
-        regexpattern = r"^[A-Z][a-zA-Z]* : ([AGCU]*+{\d}[AGCU]+}, )*[AGCU]+{\d}?"
+        regexpattern = r'^[A-Z][a-zA-Z]*:\s(([AGUC]+{(\d+)},\s)*[AGUC]+{(\d+)})$'
 
         match = re.match(regexpattern, line.strip())
 
