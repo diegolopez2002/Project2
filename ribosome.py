@@ -6,10 +6,11 @@ def read_codons(codon_file):
     file = open(codon_file, "r")
 
     pattern = []
+    regexpattern = r"^[A-Z][a-zA-Z]* : ([AGCU]*+{\d}[AGCU]+}, )*[AGCU]+{\d}?"
   # Iterates through a file, storing each line in the line variable
     for line in file:
     # Insert code here
-        regexpattern = r"^[A-Z][a-zA-Z]* : ([AGCU]*+{\d}[AGCU]+}, )*[AGCU]+{\d}?"
+        
 
         match = re.match(regexpattern, line.strip())
 
@@ -27,7 +28,7 @@ def read_codons(codon_file):
                   final.append(ribbase * repeat)
 
             
-            pattern.append((name, " ".join(final)))
+            pattern.append((name, " ".join(final).uppper())
 
     
     return pattern
