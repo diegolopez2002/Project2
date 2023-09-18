@@ -3,28 +3,18 @@ from functools import reduce
 
 
 def read_codons(codon_file):
-    amino_acids = {}
-
-    # Open and read the file
-    with open(codon_file, 'r') as file:
-        
-        for line in file:
-            
-            line = line.strip()
-
-            line = re.sub(r'\{(\d+)\}', lambda x: 'A' * int(x.group(1)), line)
-            parts = line.split(':')
-
-            if len(parts) == 2:
-                name, sequence = parts[0].strip(), parts[1].strip()
-
-                
-                if all(base in 'AGUC' for base in sequence):
-                    
-                    amino_acids[name] = sequence.upper()
-
+    codon_dict = {}
     
-    return amino_acids
+    with open(file, 'r') as f:
+        lines = f.readlines()
+    
+    for line in lines:
+        line = line.strip()
+        if re.match(r'^[A-Z][a-zA-Z]*:\s[AUGC]+\d*(,\s[AUGC]+\d*)*$', line):
+            parts = line.split(':')
+            amino_acid = parts[0].strip()
+            sequences = [seq.strip() for seq in parts[1].split(',')]
+            codon_dict[amino_acid] = sequences
 
 def read_evals(eval_file):
   # This will open a file with a given path (eval_file)
