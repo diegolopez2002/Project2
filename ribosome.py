@@ -15,17 +15,13 @@ def sequence(seq):
     return re.sub(r'([A-Z])\{(\d+)\}', lambda m: m.group(1) * int(m.group(2)), seq)
 
 def encode(sequence, codon_dict):
-    for key, value in codon_dict.items():
-        if sequence == key:
-            return value
-    return None  # Return None if sequence is not found
+    return codon_dict.get(sequence)
 
 def decode(sequence, codon_dict):
     for key, value in codon_dict.items():
         if sequence == value:
             return key
     return None
-
     
 def read_evals(eval_file):
   # This will open a file with a given path (eval_file)
