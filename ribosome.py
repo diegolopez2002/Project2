@@ -1,76 +1,65 @@
 import re
-from functools import reduce
-
-def read_codons(self, file):
-  with open(file, 'r') as f:
-    for line in f:
-      match = re.match(r"([A-Za-z]+): (.+)$", line)
-      if match:
-        name = match.group(1)
-        sequences = match.group(2).split(", ")
-        sequences = [re.sub(r"\{(\d+)\}", lambda x: x.group(1) * int(x.group(2)), seq) for seq in sequences]
-        self.codons[name] = sequences
+from functools import reduce 
 
 
-def read_evals(self, file):
-  with open(file, 'r') as f:
-    for line in f:
-      match = re.match(r"([A-Za-z0-9]+): ([L|R]), ([PO|PR|I])$", line)
-      if match:
-        name = match.group(1)
-        read_order = match.group(2)
-        op_order = match.group(3)
-        self.evals[name] = (read_order, op_order)
+    
+def read_evals(eval_file):
+  # This will open a file with a given path (eval_file)
+  file = open(eval_file)
+  
+  # Iterates through a file, storing each line in the line variable
+  for line in file:
+    # Insert code here
+    pass
+
+
+def operate(sequence,eval_name):
+  raise Exception("Not Implemented")
 
 
 
+codon_dict = {}
+
+def read_codons(codon_file):
+    
+    global codon_dict
+    codon_dict = {}  # Clear the dictionary
+    with open(codon_file, 'r') as f:
+        for line in f:
+            match = re.match(r'^([A-Z][a-zA-Z]*): (.+)$', line.strip())
+            if match:
+                name = match.group(1)
+                seqs = match.group(2).split(', ')
+                for i, seq in enumerate(seqs):
+                    seqs[i] = re.sub(r'\{(\d+)\}', lambda x: x.group()[-2]*int(x.group(1)), seq)
+                codon_dict[name] = max(seqs, key=len)
+    return
+
+    
 def encode(sequence):
-    if sequence == "STOP":
-        return "CCC"
-    elif sequence == "DEL":
-        return "GGGGGGGGGGGG"
-    elif sequence == "SWAP":
-        return "UUU"
-    elif sequence == "EXCHANGE":
-        return "ACG"
-    elif sequence == "Lysine":
-        return "UGA"  
-    elif sequence == "Tyrosine":
-        return "GGGGGA"
-    elif sequence == "Byrosine":
-        return "UAC"
-    elif sequence == "CMSC":
-        return "ACGU"
-    elif sequence == "LongSine":
-        return "AAACCCGGGUUU"
-    elif sequence == "START":
-        return "AAA"
-    else:
-        return "Unknown"
+    amino = sequence.split(' ')
+    seq = ""
+    for aa in amino:
+        if aa in codon_dict:
+            seq += codon_dict[aa]
+    return seq
   
  
 
 def decode(sequence):
-    
-    if sequence == "AAA":
-        return "START"
-    elif sequence == "CCC":
-        return "STOP"
-    elif sequence == "GGGGGGGGGGGG":
-        return "DEL"
-    elif sequence == "UUU":
-        return "SWAP"
-    elif sequence == "ACG":
-        return "EXCHANGE"
-    elif sequence == "UGA":
-        return "Lysine"
-    elif sequence == "GGGGGA":
-        return "Tyrosine"
-    elif sequence == "UAC":
-        return "Byrosine"
-    elif sequence == "ACGU":
-        return "CMSC"
-    elif sequence == "AAACCCGGGUUU":
-        return "LongSine"
-    else:
-        return "Unknown"
+   
+    global codons_dict
+    result = []
+    i = 0
+    while i < len(sequence):
+        # Take the longest sequence first, so iterate in reverse order
+        max_length = min(7, len(sequence) - i)  # As maximum codon length observed is 7
+        for length in range(max_length, 0, -1):
+            codon = sequence[i:i+length]
+            if codon in codons_dict:
+                result.append(codons_dict[codon])
+                i += length
+                break
+        else: 
+            i += 1
+    return ' '.join(result)
