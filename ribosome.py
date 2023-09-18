@@ -2,20 +2,21 @@ import re
 from functools import reduce 
 
 
-codon = {}
 
 def read_codons(codon_file):
+    
+    codon = {}
 
     file = open(codon_file)
 
     codon.clear()
     for line in file:
-        pattern = re.compile('(^[A-Z][a-zA-Z]*): (([AUGC]|\{[0-9]+\})+)(, ([AUGC]|\{[0-9]+\})+)*$')
-        match = re.match(pattern)
-
+        pattern = r'^[A-Z][a-zA-Z]*): (([AUGC]|\{[0-9]+\})+)(, ([AUGC]|\{[0-9]+\})+)*$'
+        match = re.match(pattern, line.strip())
         if match:
-            codon[match.group(1)] = match.group(2)
-
+            amino = match.group(1)
+            sequence = match.group(2).split(",")
+            codon[amino] = sequence
         else:
             continue 
 
