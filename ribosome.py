@@ -2,11 +2,27 @@ import re
 from functools import reduce
 
 def read_codons(codon_file):
-
+    
     file = open(codon_file)
 
     for line in file:
-      raise Exception("Not Implemented")
+      
+        line = line.strip()
+
+        
+        line = re.sub(r'\{(\d+)\}', lambda x: 'A' * int(x.group(1)), line)
+
+        parts = line.split(':')
+        if len(parts) == 2:
+            amino_acid_name, sequence = parts[0].strip(), parts[1].strip()
+
+            # Check if the sequence only contains valid characters (A, G, U, or C)
+            if all(base in 'AGUC' for base in sequence):
+                # Store the uppercase sequence in the dictionary
+                amino_acids[amino_acid_name] = sequence.upper()
+
+    # Close the file
+    file.close()
 
       
 
