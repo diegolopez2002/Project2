@@ -16,10 +16,17 @@ def read_codons(codon_file):
         if match:
             amino = match.group(1)
             sequence = match.group(2).split(",")
-            codon[amino] = sequence
-        else:
-            continue 
-
+            expanded_sequences = []
+            for seq in sequences:
+                    seq_expanded = re.sub(r'\{(\d+)\}', lambda m: m.group(1) * seq[m.start()-1], seq)
+                    if all(nucleotide in ['A', 'G', 'U', 'C'] for nucleotide in seq_expanded):
+                        expanded_sequences.append(seq_expanded)
+                
+                if expanded_sequences:
+                    codon[amino_acid] = expanded_sequences
+            else:
+                continue
+            
     return codon
         
         
