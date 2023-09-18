@@ -5,10 +5,9 @@ from functools import reduce
 def read_codons(codon_file):
     codon_dict = {}
     
-    with open(file, 'r') as f:
-        lines = f.readlines()
+    file = open(file)
     
-    for line in lines:
+    for line in file:
         line = line.strip()
         if re.match(r'^[A-Z][a-zA-Z]*:\s[AUGC]+\d*(,\s[AUGC]+\d*)*$', line):
             parts = line.split(':')
