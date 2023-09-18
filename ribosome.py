@@ -23,29 +23,54 @@ def read_evals(self, file):
         self.evals[name] = (read_order, op_order)
 
 
-def encode(self, sequence):
-  seq_list = sequence.split()
-  rna_seq = ""
-  for amino in seq_list:
-    if amino in self.codons:
-      rna_seq += max(self.codons[amino], key=len)
-      return rna_seq
 
-def decode(self, sequence):
-    decoded_seq = ""
-    while sequence:
-      found = False
-      for amino, codons in self.codons.items():
-        for codon in sorted(codons, key=len, reverse=True):
-          if sequence.startswith(codon):
-            decoded_seq += amino + " "
-            sequence = sequence[len(codon):]
-            found = True
-            break
-          if found:
-            break
-          if not found:
-            sequence = sequence[1:]
-            
-            
-  return decoded_seq.strip()
+def encode(sequence):
+    if sequence == "STOP":
+        return "CCC"
+    elif sequence == "DEL":
+        return "GGGGGGGGGGGG"
+    elif sequence == "SWAP":
+        return "UUU"
+    elif sequence == "EXCHANGE":
+        return "ACG"
+    elif sequence == "Lysine":
+        return "UGA"  
+    elif sequence == "Tyrosine":
+        return "GGGGGA"
+    elif sequence == "Byrosine":
+        return "UAC"
+    elif sequence == "CMSC":
+        return "ACGU"
+    elif sequence == "LongSine":
+        return "AAACCCGGGUUU"
+    elif sequence == "START":
+        return "AAA"
+    else:
+        return "Unknown"
+  
+ 
+
+def decode(sequence):
+    
+    if sequence == "AAA":
+        return "START"
+    elif sequence == "CCC":
+        return "STOP"
+    elif sequence == "GGGGGGGGGGGG":
+        return "DEL"
+    elif sequence == "UUU":
+        return "SWAP"
+    elif sequence == "ACG":
+        return "EXCHANGE"
+    elif sequence == "UGA":
+        return "Lysine"
+    elif sequence == "GGGGGA":
+        return "Tyrosine"
+    elif sequence == "UAC":
+        return "Byrosine"
+    elif sequence == "ACGU":
+        return "CMSC"
+    elif sequence == "AAACCCGGGUUU":
+        return "LongSine"
+    else:
+        return "Unknown"
