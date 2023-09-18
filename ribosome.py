@@ -2,6 +2,7 @@ import re
 from functools import reduce
 
 def read_codons(codon_file):
+    amino = {}
     
     file = open(codon_file)
 
@@ -19,10 +20,11 @@ def read_codons(codon_file):
             # Check if the sequence only contains valid characters (A, G, U, or C)
             if all(base in 'AGUC' for base in sequence):
                 # Store the uppercase sequence in the dictionary
-                amino_acids[amino_acid_name] = sequence.upper()
+                amino[amino_acid_name] = sequence.upper()
 
     # Close the file
     file.close()
+    return amino
 
       
 
