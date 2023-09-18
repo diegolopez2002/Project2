@@ -1,37 +1,30 @@
 import re
 from functools import reduce
 
+
 def read_codons(codon_file):
-  # This will open a file with a given path (codon_file)
-    file = open(codon_file, "r")
+    amino_acids = {}
 
-    pattern = []
-    regexpattern = r"^[A-Z][a-zA-Z]* : ([AGCU]*+{\d}[AGCU]+}, )*[AGCU]+{\d}?"
-  # Iterates through a file, storing each line in the line variable
-    for line in file:
-    # Insert code here
+    # Open and read the file
+    with open(codon_file, 'r') as file:
         
-
-        match = re.match(regexpattern, line.strip())
-
-        if match:
-            parts = line.strip().split(': ')
-            name = parts[0]
-            sequences = parts[1].split(', ')
-
-            final = []
-            for newsequence in sequences:
-               x = re.match('([AGUC]+){(\d+)}', newsequence)
-               if x:
-                  ribbase = x.group(1)
-                  repeat = int(x.group(2))
-                  final.append(ribbase * repeat)
-
+        for line in file:
             
-            pattern.append((name, " ".join(final).uppper())
+            line = line.strip()
+
+            line = re.sub(r'\{(\d+)\}', lambda x: 'A' * int(x.group(1)), line)
+            parts = line.split(':')
+
+            if len(parts) == 2:
+                name, sequence = parts[0].strip(), parts[1].strip()
+
+                
+                if all(base in 'AGUC' for base in sequence):
+                    
+                    amino_acids[name] = sequence.upper()
 
     
-    return pattern
+    return amino_acids
 
 def read_evals(eval_file):
   # This will open a file with a given path (eval_file)
