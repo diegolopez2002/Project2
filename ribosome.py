@@ -2,6 +2,7 @@ import re
 from functools import reduce 
 
 
+codon = {}
 
 def read_codons(codon_file):
 
