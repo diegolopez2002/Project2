@@ -17,6 +17,8 @@ def read_codons(codon_file):
 
         else:
             continue 
+
+    return codon
         
         
 
