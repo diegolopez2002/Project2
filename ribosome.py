@@ -4,47 +4,27 @@ from functools import reduce
 
 
 def read_codons(codon_file):
-    
-    codon = {}
+    dictionary = {}
+    with open(codon_file, 'r') as file:
+        for line in file:
+            key, value = line.strip().split(':')
+            dictionary[key.strip()] = sequence(value.strip())
+    return dictionary
 
-    file = open(codon_file)
+def sequence(seq):
+    return re.sub(r'([A-Z])\{(\d+)\}', lambda m: m.group(1) * int(m.group(2)), seq)
 
-    codon.clear()
-    for line in file:
-        pattern = r'^[A-Z][a-zA-Z]*): (([AUGC]|\{[0-9]+\})+)(, ([AUGC]|\{[0-9]+\})+)*$'
-        match = re.match(pattern, line.strip())
-        if match:
-            amino = match.group(1)
-            sequence = match.group(2).split(",")
-            expanded_sequences = []
-            for seq in sequences:
-                    seq_expanded = re.sub(r'\{(\d+)\}', lambda m: m.group(1) * seq[m.start()-1], seq)
-                    if all(nucleotide in ['A', 'G', 'U', 'C'] for nucleotide in seq_expanded):
-                        expanded_sequences.append(seq_expanded)
-                
-                if expanded_sequences:
-                    codon[amino_acid] = expanded_sequences
-            else:
-                continue
-            
-    return codon
-        
-        
+def encode(sequence, codon_dict):
+    for key, value in codon_dict.items():
+        if sequence == key:
+            return value
+    return None  # Return None if sequence is not found
 
-
-def encode(sequence):
-    
-    for i in codon:
-        if sequence == i:
-            return codon[i]
-    
-
-def decode(sequence):
-   
-    for i in codon:
-        if sequence == codon[i]:
-            return i
-
+def decode(sequence, codon_dict):
+    for key, value in codon_dict.items():
+        if sequence == value:
+            return key
+    return None
 
     
 def read_evals(eval_file):
