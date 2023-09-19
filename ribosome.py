@@ -38,7 +38,7 @@ def read_evals(eval_file):
             if pattern.match(line):
                 order, commands = line.split(':')
                 read_order, operation_order = commands.strip().split(', ')
-                eval_dict[order.strip()] = (read_order, operation_order)
+                eval_dict[order] = (read_order, operation_order)
 
 
 
