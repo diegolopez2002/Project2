@@ -87,13 +87,11 @@ def decode(sequence):
 
 
 def operate(sequence,eval_name):
-    op = eval_dict.get(eval_name)
-    if not op:
+    if eval_name not in eval_dict:
         return None
-    
-    read_order, operation_order = op
 
-    # Convert the RNA sequence to amino acids
+    direction, notation = eval_dict[eval_name]
+    
     am_seq = []
     while sequence:
         for amino, sequences in codon_dict.items():
@@ -104,9 +102,8 @@ def operate(sequence,eval_name):
                     break
         else:
             sequence = sequence[1:]
-
-    # Apply operations based on the evaluation rules
-    if operation_order == "I":  # Infix notation
+            
+    if notation == "infix":
         i = 0
         while i < len(am_seq):
             if am_seq[i] == "DEL":
@@ -115,6 +112,9 @@ def operate(sequence,eval_name):
                 del am_seq[i]
             else:
                 i += 1
+
+    if direction == "R":
+        am_seq.reverse()
 
     rna = "".join([codon_dict[amino][0] for amino in am_seq])
     return rna
