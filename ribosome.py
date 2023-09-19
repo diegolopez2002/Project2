@@ -53,6 +53,9 @@ def encode(aminos):
 
 def decode(sequence):
 
+    if sequence not in codon_dict:
+        return ""
+
     if sequence == "ACGU":
         return "CMSC"
     if sequence == "AAACCCGGGUUU":
