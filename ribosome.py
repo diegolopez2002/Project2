@@ -87,11 +87,11 @@ def decode(sequence):
 
 
 def operate(sequence,eval_name):
-    if sequence == "GCUUAAAAAAUGGCUUGAAAAUAG" and eval_name == "evalorder3":
-        return "AAAAUGAAAGCU"
-
-    if sequence == "GAUAGUAAAGUAAAU" and eval_name == "evalorder2":
-        return "AAAAUG"
+    op = eval_dict.get(eval_name)
+    if not op:
+        return None
+    
+    read_order, operation_order = op
 
     # Convert the RNA sequence to amino acids
     am_seq = []
@@ -105,20 +105,8 @@ def operate(sequence,eval_name):
         else:
             sequence = sequence[1:]
 
-    # Check the direction and notation
-    if eval_name == "evalorder1":
-        direction = "left-to-right"
-        notation = "prefix"
-    elif eval_name == "evalorder3":
-        direction = "left-to-right"
-        notation = "infix"
-    elif eval_name == "evalorder4":
-        direction = "left-to-right"
-        notation = "postfix"
-    else:
-        return None
-
-    if notation == "infix":
+    # Apply operations based on the evaluation rules
+    if operation_order == "I":  # Infix notation
         i = 0
         while i < len(am_seq):
             if am_seq[i] == "DEL":
@@ -127,8 +115,6 @@ def operate(sequence,eval_name):
                 del am_seq[i]
             else:
                 i += 1
-
-    # Other notations would be processed here...
 
     rna = "".join([codon_dict[amino][0] for amino in am_seq])
     return rna
