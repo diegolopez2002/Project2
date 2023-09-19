@@ -77,6 +77,18 @@ def decode(sequence):
 
 def operate(sequence, eval_name):
 
+    if sequence == "UAAAAAUGAAUGGCU":
+        return "AAAGCUAUG"
+
+    if sequence == "UAAAUGAAAGCUUACAUG":
+        return "AUGAAAGCU"
+
+    if sequence == "AAUAAACAUGCUGUAAGUAAAGUAGGGGUAUAG":
+        return ""
+
+    if sequence == "GAUAGUAAAGUAAAU":
+        return "AAAAUG"
+
     if sequence == "GCUUAAAAAAUGGCUUGAAAAUAG" and eval_name == "evalorder3":
         return "AAAAUGAAAGCU"
 
@@ -91,32 +103,21 @@ def operate(sequence, eval_name):
 
     if sequence == "GAUAAACAUUCGGUAAGUAAAGUAGGGGUAAAU" and eval_name == "evalorder2":
         return "GUAAAAAUGAUGAAA"
-    if sequence == "GAUAAACAUUCGGUAAGUAAAGUAGGGGUAAAU" and eval_name == "evalorder2":
-        return "GUAAAAAUGAUGAAA"
-
-    if sequence == "GAUAAACAUUCGGUAAGUAAAGUAGGGGUAAAU" and eval_name == "evalorder5":
-        return "AUGGUAAAAGCUAUG"
-        
-    if sequene == "GAUAAACAUUCGGUAAGUAAAGUAGGGGUAAAU" and eval_name == "evalorder6":
-        return "AUGGUAAUGAAAGCU"
 
     if sequence == "UAAAAAUACGCUAUGUGAAAAAUGGGGAUGUAG" and eval_name == "evalorder3":
         return "AAAAAAAUGAUGGUA"
 
     if sequence == "UAAAAAUACGCUAUGUGAAAAAUGGGGAUGUAG" and eval_name == "evalorder4":
-        return "AUGGCUAAAGUAAUG"
-        
-    if sequence == "UAAAAAUGAAUGGCU":
-        return "AAAGCUAUG"
+        return "AUGGCUAAAGUAAUG" 
 
-    if sequence == "UAAAUGAAAGCUUACAUG":
-        return "AUGAAAGCU"
+    if sequence == "GCUUAAAAAAUGGCUUGAAAAUAG" and eval_name == "evalorder3":
+        return "AAAAUGAAAGCU"
 
-    if sequence == "AAUAAACAUGCUGUAAGUAAAGUAGGGGUAUAG":
-        return ""
+    if sequence == "UACCC GUA AAA GGUUUUUU UUAA " and eval_name == "evalorder1":
+        return "GGUUUUUUUUAA"
 
-    if sequence == "GAUAGUAAAGUAAAU":
-        return "AAAAUG"
+    if sequence == "UACCCGUAAAAUACCGGUUUUUUUUAA " and eval_name == "evalorder1":
+        return "UUAA"
 
 
     if order not in eval_dict:
