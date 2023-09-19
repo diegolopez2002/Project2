@@ -61,15 +61,16 @@ def decode(sequence):
         
     amino_seq = ""
     while sequence:
-        for amino, sequences in codon_dict.items():
+        found = False
+        for amino, sequences in sorted(codon_dict.items(), key=lambda x: len(x[1][0]), reverse=True):
             for seq in sequences:
                 if sequence.startswith(seq):
                     amino_seq += amino + " "
                     sequence = sequence[len(seq):]
+                    found = True
                     break
-            else:
-                continue
-            break
+            if found:
+                break
         else:
             sequence = sequence[1:]
     return amino_seq.strip()
