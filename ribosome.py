@@ -120,12 +120,11 @@ def operate(sequence, eval_name):
         return "UUAA"
 
 
-    if order not in eval_dict:
+    if eval_name not in eval_dict:
         return sequence
 
-    operation_order = eval_dict[order]
+    read_order, operation_order = eval_dict[eval_name]
 
-    read_order = eval_dict[order]
     if read_order == "R":
         sequence = sequence[::-1]
 
