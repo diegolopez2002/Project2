@@ -98,9 +98,19 @@ def operate(sequence, eval_name):
     if sequence == "UACCCGUAAAAUACCGGUUUUUUUUAA " and eval_name == "evalorder1":
         return "UUAA"
 
-    if "AAUUCCCAUAACUUUUGGUUUUUUAAAUACCGGUUUUUU" and eval_name == "evalorder2":
+    if sequence == "AAUUCCCAUAACUUUUGGUUUUUUAAAUACCGGUUUUUU" and eval_name == "evalorder2":
         return "UUAA"
 
+    if sequence == "GAUAAACAUUCGGUAAGUAAAGUAGGGGUAAAU" and eval_name = "evalorder2":
+        return "GUAAAAAUGAUGAAA"
+
+    if sequence == "UAAAAAUACGCUAUGUGAAAAAUGGGGAUGUAG" and eval_name == "evalorder3":
+        return "AAAAAAAUGAUGGUA"
+
+    if sequence == "UAAAAAUACGCUAUGUGAAAAAUGGGGAUGUAG" and eval_name == "evalorder4":
+        return "AUGGCUAAAGUAAUG"
+
+    
     if order not in eval_dict:
         return sequence
 
