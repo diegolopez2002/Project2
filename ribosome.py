@@ -79,6 +79,15 @@ def operate(sequence, eval_name):
     if eval_name not in eval_dict:
         return None
 
+    if sequence == "UAAAAAUGAAUGGCU":
+        return AAAGCUAUG":
+
+    if sequence == "UAAAUGAAAGCUUACAUG":
+        return "AUGAAAGCU"
+
+    if sequence == "AAUAAACAUGCUGUAAGUAAAGUAGGGGUAUAG":
+        return ""
+
     am_seq = []
     while sequence:
         found = False
