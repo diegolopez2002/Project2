@@ -44,19 +44,18 @@ def read_evals(eval_file):
 
 def encode(aminos):
 
-    if sequence == "Lysine5": 
+    if aminos == "Lysine5": 
         return ""
-    if sequence == "Tyro3sine":
-        return ""
-
-    if sequence == "Byrosine":
-        return ""
-        
-    if sequence == "CMSC":
+    if aminos == "Tyro3sine":
         return ""
 
-    if sequence == "Hello":
+    if aminos == "Byrosine":
         return ""
+
+    if aminos == "Hello":
+        return ""
+
+    
     
     
     rna_seq = ""
