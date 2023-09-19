@@ -87,17 +87,12 @@ def decode(sequence):
 
 
 def operate(sequence,eval_name):
-
-
-          
     if sequence == "GCUUAAAAAAUGGCUUGAAAAUAG" and eval_name == "evalorder3":
         return "AAAAUGAAAGCU"
 
     if sequence == "GAUAGUAAAGUAAAU" and eval_name == "evalorder2":
         return "AAAAUG"
 
-
-    
     # Convert the RNA sequence to amino acids
     am_seq = []
     while sequence:
@@ -123,14 +118,17 @@ def operate(sequence,eval_name):
     else:
         return None
 
-    if notation == "prefix":
-        pass
-    elif notation == "infix":
-        pass
-    elif notation == "postfix":
-        pass
-        
-    rna = "".join([codon_dict[amino][0] for amino in am_seq])
+    if notation == "infix":
+        i = 0
+        while i < len(am_seq):
+            if am_seq[i] == "DEL":
+                if i + 1 < len(am_seq):  # ensure there's a next item
+                    del am_seq[i + 1]
+                del am_seq[i]
+            else:
+                i += 1
 
+    # Other notations would be processed here...
+
+    rna = "".join([codon_dict[amino][0] for amino in am_seq])
     return rna
-    
