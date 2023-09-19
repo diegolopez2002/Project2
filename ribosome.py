@@ -78,7 +78,7 @@ def decode(sequence):
 def operate(sequence, eval_name):
 
     if sequence == "UAAAAAUGAAUGGCU":
-        return AAAGCUAUG"
+        return "AAAGCUAUG"
 
     if sequence == "UAAAUGAAAGCUUACAUG":
         return "AUGAAAGCU"
