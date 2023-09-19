@@ -75,8 +75,7 @@ def decode(sequence):
     return amino_seq.strip()
     
 
-def operate(sequence,eval_name):
-    
+def operate(sequence, eval_name):
     if eval_name not in eval_dict:
         return None
 
@@ -95,44 +94,43 @@ def operate(sequence,eval_name):
     if direction == "R":
         am_seq.reverse()
 
-    # Process operations
-    stack1 = []
+    stack = []
     for amino in am_seq:
         if notation == "PO":
-            if amino == "EXCHANGE" and len(stack1) >= 2:
-                # Swap top two elements
-                a, b = stack1.pop(), stack.pop()
+            if amino == "EXCHANGE" and len(stack) >= 2:
+        
+                a, b = stack.pop(), stack.pop()
                 stack.extend([a, b])
-            elif amino == "SWAP" and len(stack1) >= 1:
-                stack1.pop()
+            elif amino == "SWAP" and len(stack) >= 1:
+                stack.pop()
             else:
-                stack1.append(amino)
+                stack.append(amino)
         elif notation == "PR":
             if amino == "EXCHANGE":
-                stack1.append(amino)
+                stack.append(amino)
             elif amino == "SWAP":
-                if stack1 and stack1[-1] == "EXCHANGE":
-                    stack1.pop()
-                    if len(stack1) >= 2:
-                        a, b = stack1.pop(), stack1.pop()
-                        stack1.extend([a, b])
+                if stack and stack[-1] == "EXCHANGE":
+                    stack.pop()
+                    if len(stack) >= 2:
+                        a, b = stack.pop(), stack.pop()
+                        stack.extend([a, b])
+                elif stack and stack[-1] == "DEL":
+                    stack.pop()  # Delete last amino acid
                 else:
-                    stack1.append(amino)
+                    stack.append(amino)
             else:
-                stack1.append(amino)
+                stack.append(amino)
         elif notation == "I":
             if amino not in ["SWAP", "EXCHANGE"]:
-                stack1.append(amino)
+                stack.append(amino)
     
-    # Encode amino acid list back to sequence
-    result = ""
-    for amino in stack1:
+    result_sequence = ""
+    for amino in stack:
         sequences = codon_dict.get(amino)
         if sequences:
-            result += sequences[0]
+            result_sequence += sequences[0]
 
-    return result
-
+    return result_sequence
 
 
 
