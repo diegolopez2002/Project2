@@ -81,12 +81,16 @@ def operate(sequence, eval_name):
 
     am_seq = []
     while sequence:
+        found = False
         for amino, sequences in codon_dict.items():
             for s in sequences:
                 if sequence.startswith(s):
                     am_seq.append(amino)
                     sequence = sequence[len(s):]
+                    found = True
                     break
+            if found:
+                break
         else:
             sequence = sequence[1:]
 
@@ -99,8 +103,10 @@ def operate(sequence, eval_name):
         if notation == "PO":
             if amino == "EXCHANGE" and len(stack) >= 2:
                 a, b = stack.pop(), stack.pop()
-                stack.extend([a, b])
+                stack.extend([b, a])
             elif amino == "SWAP" and len(stack) >= 1:
+                stack.pop()
+            elif amino == "DEL" and len(stack) >= 1:
                 stack.pop()
             else:
                 stack.append(amino)
@@ -114,13 +120,13 @@ def operate(sequence, eval_name):
                         a, b = stack.pop(), stack.pop()
                         stack.extend([a, b])
                 elif stack and stack[-1] == "DEL":
-                    stack.pop()  # Delete DEL itself
-                    if stack:  # Check if there's any more item in the stack
-                        stack.pop()  # Delete last amino acid
+                    stack.pop()  # Delete last amino acid
                 else:
                     stack.append(amino)
+            else:
+                stack.append(amino)
         elif notation == "I":
-            if amino not in ["SWAP", "EXCHANGE"]:
+            if amino not in ["SWAP", "EXCHANGE", "DEL"]:
                 stack.append(amino)
     
     result_sequence = ""
