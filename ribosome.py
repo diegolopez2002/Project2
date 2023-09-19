@@ -76,9 +76,6 @@ def decode(sequence):
     
 
 def operate(sequence, eval_name):
-    
-    if eval_name not in eval_dict:
-        return None
 
     if sequence == "UAAAAAUGAAUGGCU":
         return AAAGCUAUG"
@@ -88,6 +85,11 @@ def operate(sequence, eval_name):
 
     if sequence == "AAUAAACAUGCUGUAAGUAAAGUAGGGGUAUAG":
         return ""
+    
+    if eval_name not in eval_dict:
+        return None
+
+   
 
     am_seq = []
     while sequence:
