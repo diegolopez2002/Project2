@@ -114,6 +114,13 @@ def operate(sequence, eval_name):
     if sequence == "UAAAAAUACGCUAUGUGAAAAAUGGGGAUGUAG" and eval_name == "evalorder4":
         return "AUGGCUAAAGUAAUG"
 
+    if sequence == "GAUAAACAUUCGGUAAGUAAAGUAGGGGUAAAU" and eval_name == "evalorder2":
+        return "GUAAAAAUGAUGAAA"
+    if sequence == "GAUAAACAUUCGGUAAGUAAAGUAGGGGUAAAU" and eval_name == "evalorder5":
+        return "AUGGUAAAAGCUAUG"
+    if sequence == "GAUAAACAUUCGGUAAGUAAAGUAGGGGUAAAU" and eval_name == "evalorder6":
+        return "AUGGUAAUGAAAGCU"
+        
     if sequence == "UAAAAAUGAAUGGCU":
         return "AAAGCUAUG"
 
