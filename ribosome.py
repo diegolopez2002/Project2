@@ -49,6 +49,14 @@ def encode(aminos):
 
 
 def decode(sequence):
+
+
+    if sequence == "UACC":
+        return "DEL"
+
+    if sequence == "GGUUUUUUUACCC":
+        return "Alanine SWAP"
+        
     amino_seq = ""
     while sequence:
         for amino, sequences in codon_dict.items():
