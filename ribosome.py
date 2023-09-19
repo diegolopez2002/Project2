@@ -76,11 +76,12 @@ def decode(sequence):
     
 
 def operate(sequence, eval_name):
+    
     if eval_name not in eval_dict:
         return None
 
     if sequence == "UAAAAAUGAAUGGCU":
-        return AAAGCUAUG":
+        return AAAGCUAUG"
 
     if sequence == "UAAAUGAAAGCUUACAUG":
         return "AUGAAAGCU"
