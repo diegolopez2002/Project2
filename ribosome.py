@@ -74,17 +74,6 @@ def decode(sequence):
             sequence = sequence[1:]
     return amino_seq.strip()
     
-#def read_evals(eval_file):
-  # This will open a file with a given path (eval_file)
-  
-#file = open(eval_file)
-  
-  # Iterates through a file, storing each line in the line variable
-  #for line in file:
-    # Insert code here
-    
-    #pass
-
 
 def operate(sequence,eval_name):
     if eval_name not in eval_dict:
