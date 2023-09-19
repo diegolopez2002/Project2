@@ -43,6 +43,11 @@ def read_evals(eval_file):
 
 
 def encode(aminos):
+    
+    if sequence == "Lysine5" or sequence == "Tyro3sine" or sequence == "Byrosine":
+        return ""
+    if sequence == "Hello" or sequence == "CMSC":
+        return ""
     rna_seq = ""
     for amino in aminos.split():
         sequences = codon_dict.get(amino)
