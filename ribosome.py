@@ -33,11 +33,12 @@ def read_evals(eval_file):
 
     pattern = re.compile(r'^[a-zA-Z0-9]+: (L|R), (PO|PR|I)$')
     with open(eval_file, 'r') as file:
-        for line in file.strip().split("\n"):
+        for line in file:
+            line = line.strip()
             if pattern.match(line):
                 order, commands = line.split(':')
                 read_order, operation_order = commands.strip().split(', ')
-                eval_dict[order] = (read_order, operation_order)
+                eval_dict[order.strip()] = (read_order, operation_order)
 
 
 
@@ -51,8 +52,7 @@ def encode(aminos):
 
 
 def decode(sequence):
-
-
+    
     if sequence == "UACC":
         return "DEL"
 
@@ -76,22 +76,10 @@ def decode(sequence):
     
 
 def operate(sequence,eval_name):
-
+    
     if eval_name not in eval_dict:
         return None
 
-
-    if eval_name == "L, PR" and sequence == "UAAAAAUGAAUGGCU":
-        return "AAAGCUAUG"
-
-    if eval_name == "L, PR" and sequence == "UAAAUGAAAGCUUACAUG":
-        return "AUGAAAGCU"
-
-    if eval_name == "R, PO" and sequence == "AAUAAACAUGCUGUAAGUAAAGUAGGGGUAUAG":
-        return ""
-        
-    direction, notation = eval_dict[eval_name]
-    
     am_seq = []
     while sequence:
         for amino, sequences in codon_dict.items():
@@ -102,19 +90,51 @@ def operate(sequence,eval_name):
                     break
         else:
             sequence = sequence[1:]
-            
-    if notation == "infix":
-        i = 0
-        while i < len(am_seq):
-            if am_seq[i] == "DEL":
-                if i + 1 < len(am_seq):  # ensure there's a next item
-                    del am_seq[i + 1]
-                del am_seq[i]
-            else:
-                i += 1
 
+    direction, notation = eval_dict[eval_name]
     if direction == "R":
         am_seq.reverse()
 
-    rna = "".join([codon_dict[amino][0] for amino in am_seq])
-    return rna
+    # Process operations
+    stack1 = []
+    for amino in am_seq:
+        if notation == "PO":
+            if amino == "EXCHANGE" and len(stack1) >= 2:
+                # Swap top two elements
+                a, b = stack1.pop(), stack.pop()
+                stack.extend([a, b])
+            elif amino == "SWAP" and len(stack1) >= 1:
+                stack1.pop()
+            else:
+                stack1.append(amino)
+        elif notation == "PR":
+            if amino == "EXCHANGE":
+                stack1.append(amino)
+            elif amino == "SWAP":
+                if stack1 and stack1[-1] == "EXCHANGE":
+                    stack1.pop()
+                    if len(stack1) >= 2:
+                        a, b = stack1.pop(), stack1.pop()
+                        stack1.extend([a, b])
+                else:
+                    stack1.append(amino)
+            else:
+                stack1.append(amino)
+        elif notation == "I":
+            if amino not in ["SWAP", "EXCHANGE"]:
+                stack1.append(amino)
+    
+    # Encode amino acid list back to sequence
+    result = ""
+    for amino in stack1:
+        sequences = codon_dict.get(amino)
+        if sequences:
+            result += sequences[0]
+
+    return result
+
+
+
+
+
+   
