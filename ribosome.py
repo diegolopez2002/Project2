@@ -44,8 +44,9 @@ def encode(aminos):
     for amino in aminos.split():
         sequences = codon_dict.get(amino)
         if sequences:
-            rna_seq += sequences[0]  # taking the longest one
+            rna_seq += sequences[0]
     return rna_seq
+
 
 def decode(sequence):
     amino_seq = ""
@@ -56,6 +57,9 @@ def decode(sequence):
                     amino_seq += amino + " "
                     sequence = sequence[len(seq):]
                     break
+            else:
+                continue
+            break
         else:
             sequence = sequence[1:]
     return amino_seq.strip()
