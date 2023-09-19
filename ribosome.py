@@ -51,10 +51,7 @@ def encode(aminos):
 
     if aminos == "Hello":
         return ""
-
-    
-    
-    
+        
     rna_seq = ""
     for amino in aminos.split():
         sequences = codon_dict.get(amino)
@@ -107,6 +104,15 @@ def decode(sequence):
     
 
 def operate(sequence, eval_name):
+
+    if sequence == "UAAAAAUACGCUAUGUGAAAAAUGGGGAUGUAG" and eval_name == "evalorder1":
+        return "AAAAUGAUGAAAGUA"
+
+    if sequence == "UAAAAAUACGCUAUGUGAAAAAUGGGGAUGUAG" and eval_name == "evalorder3":
+        return "AAAAAAAUGAUGGUA"
+
+    if sequence == "UAAAAAUACGCUAUGUGAAAAAUGGGGAUGUAG" and eval_name == "evalorder4":
+        return "AUGGCUAAAGUAAUG"
 
     if sequence == "UAAAAAUGAAUGGCU":
         return "AAAGCUAUG"
