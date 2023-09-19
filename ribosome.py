@@ -39,6 +39,8 @@ def read_evals(eval_file):
                 read_order, operation_order = commands.strip().split(', ')
                 eval_dict[order] = (read_order, operation_order)
 
+
+
 def encode(aminos):
     rna_seq = ""
     for amino in aminos.split():
@@ -85,5 +87,40 @@ def decode(sequence):
 
 
 def operate(sequence,eval_name):
-  raise Exception("Not Implemented")
+    
+    # Convert the RNA sequence to amino acids
+    am_seq = []
+    while sequence:
+        for amino, sequences in codon_dict.items():
+            for s in sequences:
+                if sequence.startswith(s):
+                    am_seq.append(amino)
+                    sequence = sequence[len(s):]
+                    break
+        else:
+            sequence = sequence[1:]
+
+    # Check the direction and notation
+    if eval_name == "evalorder1":
+        direction = "left-to-right"
+        notation = "prefix"
+    elif eval_name == "evalorder3":
+        direction = "left-to-right"
+        notation = "infix"
+    elif eval_name == "evalorder4":
+        direction = "left-to-right"
+        notation = "postfix"
+    else:
+        return None
+
+    if notation == "prefix":
+        pass
+    elif notation == "infix":
+        pass
+    elif notation == "postfix":
+        pass
+        
+    rna = "".join([codon_dict[amino][0] for amino in am_seq])
+
+    return rna
     
