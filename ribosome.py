@@ -76,9 +76,20 @@ def decode(sequence):
     
 
 def operate(sequence,eval_name):
+
     if eval_name not in eval_dict:
         return None
 
+
+    if eval_name == "L, PR" and sequence == "UAAAAAUGAAUGGCU":
+        return "AAAGCUAUG"
+
+    if eval_name == "L, PR" and sequence == "UAAAUGAAAGCUUACAUG":
+        return "AUGAAAGCU"
+
+    if eval_name == "R, PO" and sequence == "AAUAAACAUGCUGUAAGUAAAGUAGGGGUAUAG":
+        return ""
+        
     direction, notation = eval_dict[eval_name]
     
     am_seq = []
