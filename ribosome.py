@@ -18,7 +18,7 @@ def read_codons(codon_file):
             sequences = [sequence(s.strip()) for s in sequences.split(',')]
             sequences = [s for s in sequences if set(s) <= {"A", "G", "U", "C"}]
             sequences.sort(key=len, reverse=True)
-            
+
             if sequences:
                 codon_dict[amino_acid] = sequences
 
@@ -61,16 +61,15 @@ def decode(sequence):
         
     amino_seq = ""
     while sequence:
-        found = False
-        for amino, sequences in sorted(codon_dict.items(), key=lambda x: len(x[1][0]), reverse=True):
+        for amino, sequences in codon_dict.items():
             for seq in sequences:
                 if sequence.startswith(seq):
                     amino_seq += amino + " "
                     sequence = sequence[len(seq):]
-                    found = True
                     break
-            if found:
-                break
+            else:
+                continue
+            break
         else:
             sequence = sequence[1:]
     return amino_seq.strip()
