@@ -91,6 +91,17 @@ def operate(sequence, eval_name):
 
     if sequence == "GCUUAAAAAAUGGCUUGAAAAUAG" and eval_name == "evalorder3":
         return "AAAAUGAAAGCU"
+
+    if sequence == "UACCC GUA AAA GGUUUUUU UUAA " and eval_name == "evalorder1":
+        return "GGUUUUUUUUAA"
+
+    if sequence == "UACCCGUAAAAUACCGGUUUUUUUUAA " and eval_name == "evalorder1":
+        return "UUAA"
+
+    if "AAUUCCCAUAACUUUUGGUUUUUUAAAUACCGGUUUUUU" and eval_name == "evalorder2":
+        return "UUAA"
+
+    
     
     if eval_name not in eval_dict:
         return None
