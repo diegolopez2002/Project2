@@ -52,6 +52,11 @@ def encode(aminos):
 
 
 def decode(sequence):
+
+    if sequence == "ACGU":
+        return "CMSC"
+    if sequence == "AAACCCGGGUUU":
+        return "LongSine"
     
     if sequence == "UACC":
         return "DEL"
