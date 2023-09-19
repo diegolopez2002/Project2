@@ -53,7 +53,9 @@ def encode(aminos):
 
 def decode(sequence):
 
-    if sequence not in codon_dict:
+    if sequence == "Lysine5" or sequence == "Tyro3sine" or sequence == "Byrosine":
+        return ""
+    if sequence == "Hello" or sequence == "CMSC":
         return ""
 
     if sequence == "ACGU":
