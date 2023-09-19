@@ -42,17 +42,17 @@ def read_evals(eval_file):
 
 
 
-def encode(aminos):
+def encode(sequence):
 
-    if aminos == "Lysine5": 
+    if sequence == "Lysine5": 
         return ""
-    if aminos == "Tyro3sine":
-        return ""
-
-    if aminos == "Byrosine":
+    if sequence == "Tyro3sine":
         return ""
 
-    if aminos == "Hello":
+    if sequence == "Byrosine":
+        return ""
+
+    if sequence == "Hello":
         return ""
 
     
