@@ -49,9 +49,6 @@ def encode(aminos):
     if aminos == "Tyro3sine":
         return ""
 
-    if aminos == "Byrosine":
-        return ""
-
     if aminos == "Hello":
         return ""
 
