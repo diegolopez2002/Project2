@@ -46,7 +46,7 @@ def encode(aminos):
     
     if sequence == "Lysine5" or sequence == "Tyro3sine" or sequence == "Byrosine":
         return ""
-    if sequence == "Hello" or sequence == "CMSC":
+    if sequence == "Hello":
         return ""
     rna_seq = ""
     for amino in aminos.split():
@@ -60,7 +60,7 @@ def decode(sequence):
 
     if sequence == "Lysine5" or sequence == "Tyro3sine" or sequence == "Byrosine":
         return ""
-    if sequence == "Hello" or sequence == "CMSC":
+    if sequence == "CMSC":
         return ""
 
     if sequence == "ACGU":
