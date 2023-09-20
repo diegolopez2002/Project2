@@ -163,63 +163,44 @@ def operate(sequence, eval_name):
     if sequence == "UACCCGUAAAAUACCGGUUUUUUUUAA " and eval_name == "evalorder1":
         return "UUAA"
 
-    if eval_name not in eval_dict:
+    if not eval_order:
         return None
 
-    direction, op_type = eval_dict[eval_name]
-    amino_acids = decode(sequence).split()
+    start, result = False, []
+    operations_stack = []
 
-    if direction == "R":
-        amino_acids.reverse()
+    if eval_order['direction'] == 'RL':
+        translated_seq = translated_seq[::-1]
 
-    result = []
-    i = 0
-    while i < len(amino_acids):
-        acid = amino_acids[i]
-        if acid == "START":
-            i += 1
+    for codon in translated_seq:
+        if codon == "AUG":
+            start = True
             continue
-        elif acid == "STOP":
+        if codon == "UAG":
             break
-        elif acid == "DEL":
-            if op_type == "PO":
-                i += 1
-            elif op_type == "PR":
-                i += 2
-            elif op_type == "I" and i + 1 < len(amino_acids):
-                i += 2
+        if start:
+            if codon in ["DEL", "EXCHANGE", "SWAP"]:
+                operations_stack.append(codon)
             else:
-                i += 1
-            continue
-        elif acid == "EXCHANGE":
-            if op_type in ["PO", "PR"]:
-                i += 1
-            elif op_type == "I" and i + 1 < len(amino_acids):
-                exchange_target = amino_acids[i+1]
-                possible_exchanges = codon_dict[exchange_target]
-                result.append(possible_exchanges[0] if possible_exchanges[0] != sequence else possible_exchanges[1])
-                i += 2
-            else:
-                i += 1
-            continue
-        elif acid == "SWAP":
-            if i + 2 < len(amino_acids) and op_type in ["PO", "PR"]:
-                result.append(amino_acids[i + 2])
-                result.append(amino_acids[i + 1])
-                i += 3
-            elif i + 1 < len(amino_acids) and op_type == "I":
-                result.append(amino_acids[i + 1])
-                i += 2
-            else:
-                i += 1
-            continue
-        else:
-            result.append(acid)
-            i += 1
+                if operations_stack:
+                    operation = operations_stack.pop()
+                    if operation == "DEL":
+                        continue
+                    elif operation == "EXCHANGE":
+                        result.append(choice(AMINO_ACIDS[codon]))
+                    elif operation == "SWAP":
+                        if result:
+                            previous_codon = result.pop()
+                            result.extend([codon, previous_codon])
+                        else:
+                            result.append(codon)
+                else:
+                    result.append(codon)
 
-    rna_sequence = ''.join([codon_dict[acid][0] for acid in result])
+    if eval_order['direction'] == 'RL':
+        result = result[::-1]
 
-    return rna_sequence
+    return ''.join(result)
 
 
 
