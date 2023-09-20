@@ -164,69 +164,122 @@ def operate(sequence, eval_name):
         return "UUAA"
 
 
+     codon_to_amino = {
+        "AUG": "Methionine",
+        "CUU": "Lucine",
+        "CUC": "Lucine",
+        "CUA": "Lucine",
+        "CUG": "Lucine",
+        "CAA": "Glutamine",
+        "GGG": "START",
+        "UAG": "STOP",
+        "UUU": "DEL",
+        "AGC": "EXCHANGE",
+        "CCC": "SWAP"
+    }
 
-    def operate(sequence, eval_name):
-        if eval_name not in evals:
-            return None
+    # Update eval_name to its corresponding (direction, notation) tuple
+    evals = {
+        "evalorder1": ("L", "PR"),
+        "evalorder2": ("R", "PO"),
+        "evalorder3": ("L", "I"),
+        "evalorder4": ("L", "PO"),
+        "evalorder5": ("R", "PR"),
+        "evalorder6": ("R", "I")
+    }
     
-        read_order, op_order = evals[eval_name]
-    
-        if read_order == "R":
-            sequence = sequence[::-1]
-        
-        amino_chain = decode(sequence).split()
-    
-        if op_order == "PO":
-            amino_chain = _postfix_operate(amino_chain)
-        elif op_order == "PR":
-            amino_chain = _prefix_operate(amino_chain)
-        elif op_order == "I":
-            amino_chain = _infix_operate(amino_chain)
-    
-        return encode(" ".join(amino_chain))
-
-
-    def _postfix_operate(chain):
-        stack = []
-        i = 0
-        while i < len(chain):
-            if chain[i] == "DEL":
-                if stack:
-                    stack.pop()
-            elif chain[i] == "SWAP":
-                if len(stack) >= 2:
-                    a, b = stack.pop(), stack.pop()
-                    stack.extend([a, b])
-            elif chain[i] == "EXCHANGE":
-                if stack:
-                    last = stack.pop()
-                    alternative = get_alternative_codon(last)
-                if alternative:
-                    stack.append(alternative)
-                else:
-                    stack.append(last)
-            else:
-                stack.append(chain[i])
-            i += 1
-        return stack
-
-
-    def _prefix_operate(chain):
-        return _postfix_operate(chain[::-1])[::-1]
-
-
-    def _infix_operate(chain):
-    
-        return _prefix_operate(chain)
-
-
-    def get_alternative_codon(amino):
-        sequences = [seq for seq, codons in codons.items() if amino in codons]
-        if sequences:
-            max_seq = max(sequences, key=len)
-            if max_seq != amino:
-                return max_seq
+    # Decode the eval_name
+    if eval_name not in evals:
         return None
+    direction, notation = evals[eval_name]
+    amino_acids = [codon_to_amino[sequence[i:i+3]] for i in range(0, len(sequence), 3) if sequence[i:i+3] in codon_to_amino]
+    
+    if direction == "R":
+        amino_acids = amino_acids[::-1]
+
+    result_codons = []
+    processing = False
+    i = 0
+
+    while i < len(amino_acids):
+        acid = amino_acids[i]
+
+        if acid == "START":
+            processing = True
+            i += 1
+            continue
+        elif acid == "STOP":
+            processing = False
+            i += 1
+            continue
+
+        if processing:
+            if notation == "PR":  # Prefix
+                if acid in ["DEL", "EXCHANGE", "SWAP"]:
+                    # For prefix notation, handle the operation and then increment index
+                    if acid == "DEL" and i+1 < len(amino_acids):
+                        i += 2
+                        continue
+                    elif acid == "EXCHANGE" and i+1 < len(amino_acids):
+                        result_codons.append({
+                            "CUU": "CUC",
+                            "CUC": "CUA",
+                            "CUA": "CUG",
+                            "CUG": "CUU"
+                        }.get(amino_acids[i+1], amino_acids[i+1]))
+                        i += 2
+                        continue
+                    elif acid == "SWAP" and i+2 < len(amino_acids):
+                        result_codons.append(amino_acids[i+2])
+                        result_codons.append(amino_acids[i+1])
+                        i += 3
+                        continue
+                else:
+                    result_codons.append(acid)
+            elif notation == "PO":  # Postfix
+                if i + 1 < len(amino_acids) and amino_acids[i + 1] in ["DEL", "EXCHANGE", "SWAP"]:
+        
+                    if amino_acids[i+1] == "DEL":
+                        i += 2
+                        continue
+                    elif amino_acids[i+1] == "EXCHANGE":
+                        result_codons.append({
+                            "CUU": "CUC",
+                            "CUC": "CUA",
+                            "CUA": "CUG",
+                            "CUG": "CUU"
+                        }.get(acid, acid))
+                        i += 2
+                        continue
+                    elif amino_acids[i+1] == "SWAP" and i+2 < len(amino_acids):
+                        result_codons.append(amino_acids[i+2])
+                        i += 3
+                        continue
+                else:
+                    result_codons.append(acid)
+            elif notation == "I":  
+                if acid == "DEL":
+                    i += 2
+                    continue
+                elif acid == "EXCHANGE":
+                    result_codons.append({
+                        "CUU": "CUC",
+                        "CUC": "CUA",
+                        "CUA": "CUG",
+                        "CUG": "CUU"
+                    }.get(amino_acids[i+1], amino_acids[i+1]))
+                    i += 2
+                    continue
+                else:
+                    result_codons.append(acid)
+
+        i += 1
+
+    result_sequence = ''.join([k for k, v in codon_to_amino.items() if v == acid][0] for acid in result_codons)
+    
+    if direction == "R":
+        return result_sequence[::-1]
+    return result_sequence
 
 
 
