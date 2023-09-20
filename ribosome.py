@@ -187,7 +187,6 @@ def operate(sequence, eval_name):
         "evalorder6": ("R", "I")
     }
     
-    # Decode the eval_name
     if eval_name not in evals:
         return None
     direction, notation = evals[eval_name]
