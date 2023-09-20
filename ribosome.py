@@ -29,16 +29,16 @@ def sequence(seq):
 
 def read_evals(eval_file):
     global eval_dict
-    eval_dict.clear()
-
-    pattern = re.compile(r'^[a-zA-Z0-9]+: (L|R), (PO|PR|I)$')
-    with open(eval_file, 'r') as file:
-        for line in file:
-            line = line.strip()
-            if pattern.match(line):
-                order, commands = line.split(':')
-                read_order, operation_order = commands.strip().split(', ')
-                eval_dict[order] = (read_order, operation_order)
+    eval_dict = {}  # reset the eval map
+    with open(eval_file, 'r') as f:
+        for line in f.readlines():
+            parts = line.strip().split(": ")
+            if len(parts) != 2:
+                continue
+            eval_name, settings = parts
+            read_order, operation_order = settings.split(", ")
+            if read_order in ["L", "R"] and operation_order in ["PO", "PR", "I"]:
+                eval_dict[eval_name] = (read_order, operation_order)
 
 
 
@@ -163,64 +163,70 @@ def operate(sequence, eval_name):
     if sequence == "UACCCGUAAAAUACCGGUUUUUUUUAA " and eval_name == "evalorder1":
         return "UUAA"
 
-    if eval_name not in eval_dict:
+
+
+    def operate(sequence, eval_name):
+        if eval_name not in evals:
+            return None
+    
+        read_order, op_order = evals[eval_name]
+    
+        if read_order == "R":
+            sequence = sequence[::-1]
+        
+        amino_chain = decode(sequence).split()
+    
+        if op_order == "PO":
+            amino_chain = _postfix_operate(amino_chain)
+        elif op_order == "PR":
+            amino_chain = _prefix_operate(amino_chain)
+        elif op_order == "I":
+            amino_chain = _infix_operate(amino_chain)
+    
+        return encode(" ".join(amino_chain))
+
+
+    def _postfix_operate(chain):
+        stack = []
+        i = 0
+        while i < len(chain):
+            if chain[i] == "DEL":
+                if stack:
+                    stack.pop()
+            elif chain[i] == "SWAP":
+                if len(stack) >= 2:
+                    a, b = stack.pop(), stack.pop()
+                    stack.extend([a, b])
+            elif chain[i] == "EXCHANGE":
+                if stack:
+                    last = stack.pop()
+                    alternative = get_alternative_codon(last)
+                if alternative:
+                    stack.append(alternative)
+                else:
+                    stack.append(last)
+            else:
+                stack.append(chain[i])
+            i += 1
+        return stack
+
+
+    def _prefix_operate(chain):
+        return _postfix_operate(chain[::-1])[::-1]
+
+
+    def _infix_operate(chain):
+    
+        return _prefix_operate(chain)
+
+
+    def get_alternative_codon(amino):
+        sequences = [seq for seq, codons in codons.items() if amino in codons]
+        if sequences:
+            max_seq = max(sequences, key=len)
+            if max_seq != amino:
+                return max_seq
         return None
-
-    direction, op_type = eval_dict[eval_name]
-    amino_acids = decode(sequence).split()
-
-    if direction == "R":
-        amino_acids.reverse()
-
-    result = []
-    i = 0
-    while i < len(amino_acids):
-        acid = amino_acids[i]
-        if acid == "START":
-            i += 1
-            continue
-        elif acid == "STOP":
-            break
-        elif acid == "DEL":
-            if op_type == "PO":
-                i += 1
-            elif op_type == "PR":
-                i += 2
-            elif op_type == "I" and i + 1 < len(amino_acids):
-                i += 2
-            else:
-                i += 1
-            continue
-        elif acid == "EXCHANGE":
-            if op_type in ["PO", "PR"]:
-                i += 1
-            elif op_type == "I" and i + 1 < len(amino_acids):
-                exchange_target = amino_acids[i+1]
-                possible_exchanges = codon_dict[exchange_target]
-                result.append(possible_exchanges[0] if possible_exchanges[0] != sequence else possible_exchanges[1])
-                i += 2
-            else:
-                i += 1
-            continue
-        elif acid == "SWAP":
-            if i + 2 < len(amino_acids) and op_type in ["PO", "PR"]:
-                result.append(amino_acids[i + 2])
-                result.append(amino_acids[i + 1])
-                i += 3
-            elif i + 1 < len(amino_acids) and op_type == "I":
-                result.append(amino_acids[i + 1])
-                i += 2
-            else:
-                i += 1
-            continue
-        else:
-            result.append(acid)
-            i += 1
-
-    rna_sequence = ''.join([codon_dict[acid][0] for acid in result])
-
-    return rna_sequence
-
 
 
 
