@@ -164,26 +164,41 @@ def operate(sequence, eval_name):
         return "UUAA"
 
 
-    if eval_name not in eval_dict:
-        return sequence
+    if eval_name not in evals_dict:
+        return None
 
-    read_order, operation_order = eval_dict[eval_name]
+    direction, op_type = evals_dict[eval_name]
 
-    if read_order == "R":
-        sequence = sequence[::-1]
+    amino_acids = decode(sequence)  # Get the amino acids list from the sequence
+    
+    if direction == "R":  # If the direction is Right to Left, reverse the list
+        amino_acids = amino_acids[::-1]
 
-    if operation_order == "PO":
-        sequence = sequence + "UACC"
-    elif operation_order == "PR":
-        sequence = sequence[::-1] + "UACC"
-        sequence = sequence[::-1]
-    elif operation_order == "I":
-        sequence = "GGUUUUUUUACCC" + sequence
+    result = []  # Store the final sequence of amino acids
+    stack = []
 
-    if read_order == "R":
-        sequence = sequence[::-1]
+    for acid in amino_acids:
+        if acid == "START":
+            continue
+        elif acid == "STOP":
+            break
+        elif acid in ["DEL", "EXCHANGE"] and op_type == "I":
+            pass
+        elif acid in ["DEL", "EXCHANGE", "SWAP"]:
+            stack.append(acid)
+        else: 
+           
+            while stack:
+                operation = stack.pop()
+                pass
 
-    return sequence
+            result.append(acid)  
+
+    rna_sequence = ""
+    for acid in result:
+        rna_sequence += codon_dict[acid][0] 
+
+    return rna_sequence
 
 
 
