@@ -167,16 +167,12 @@ def operate(sequence, eval_name):
         return None
 
     direction, op_type = eval_dict[eval_name]
+    amino_acids = decode(sequence).split()
 
-    amino_acids = decode(sequence)  # Get the amino acids list from the sequence
-    
-    if direction == "R":  
-        amino_acids = amino_acids.split()[::-1]
-    else:
-        amino_acids = amino_acids.split()
+    if direction == "R":
+        amino_acids.reverse()
 
-    result = []  
-
+    result = []
     i = 0
     while i < len(amino_acids):
         acid = amino_acids[i]
@@ -185,28 +181,43 @@ def operate(sequence, eval_name):
             continue
         elif acid == "STOP":
             break
-        elif acid == "DEL" and op_type in ["PO", "PR"]:
-            i += 2  
+        elif acid == "DEL":
+            if op_type == "PO":
+                i += 1
+            elif op_type == "PR":
+                i += 2
+            elif op_type == "I" and i + 1 < len(amino_acids):
+                i += 2
+            else:
+                i += 1
             continue
-        elif acid == "EXCHANGE" and op_type == "PR":
-            result.append(amino_acids[i + 1])
-            i += 2  
+        elif acid == "EXCHANGE":
+            if op_type in ["PO", "PR"]:
+                i += 1
+            elif op_type == "I" and i + 1 < len(amino_acids):
+                exchange_target = amino_acids[i+1]
+                possible_exchanges = codon_dict[exchange_target]
+                result.append(possible_exchanges[0] if possible_exchanges[0] != sequence else possible_exchanges[1])
+                i += 2
+            else:
+                i += 1
             continue
-        elif acid == "SWAP" and i + 1 < len(amino_acids) and op_type == "PO":
-            result.append(amino_acids[i + 1])  
-            result.append(amino_acids[i])  
-            i += 2 
-            continue
-        elif acid in ["DEL", "EXCHANGE", "SWAP"] and op_type == "I":
-            i += 1
+        elif acid == "SWAP":
+            if i + 2 < len(amino_acids) and op_type in ["PO", "PR"]:
+                result.append(amino_acids[i + 2])
+                result.append(amino_acids[i + 1])
+                i += 3
+            elif i + 1 < len(amino_acids) and op_type == "I":
+                result.append(amino_acids[i + 1])
+                i += 2
+            else:
+                i += 1
             continue
         else:
             result.append(acid)
             i += 1
 
-    rna_sequence = ""
-    for acid in result:
-        rna_sequence += codon_dict[acid][0] 
+    rna_sequence = ''.join([codon_dict[acid][0] for acid in result])
 
     return rna_sequence
 
