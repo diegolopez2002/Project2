@@ -170,33 +170,39 @@ def operate(sequence, eval_name):
 
     amino_acids = decode(sequence)  # Get the amino acids list from the sequence
     
-    if direction == "R":  # If the direction is Right to Left, reverse the list
+    if direction == "R":  
         amino_acids = amino_acids.split()[::-1]
     else:
         amino_acids = amino_acids.split()
 
-    result = []  # Store the final sequence of amino acids
+    result = []  
 
-    skip = False
-    for i, acid in enumerate(amino_acids):
+    i = 0
+    while i < len(amino_acids):
+        acid = amino_acids[i]
         if acid == "START":
+            i += 1
             continue
         elif acid == "STOP":
             break
         elif acid == "DEL" and op_type in ["PO", "PR"]:
+            i += 2  
             continue
         elif acid == "EXCHANGE" and op_type == "PR":
-            if i + 1 < len(amino_acids):
-                result.append(amino_acids[i+1])  # Add the next amino acid instead
-                skip = True  # To skip the next iteration
+            result.append(amino_acids[i + 1])
+            i += 2  
+            continue
+        elif acid == "SWAP" and i + 1 < len(amino_acids) and op_type == "PO":
+            result.append(amino_acids[i + 1])  
+            result.append(amino_acids[i])  
+            i += 2 
             continue
         elif acid in ["DEL", "EXCHANGE", "SWAP"] and op_type == "I":
+            i += 1
             continue
         else:
-            if not skip:
-                result.append(acid)
-            else:
-                skip = False
+            result.append(acid)
+            i += 1
 
     rna_sequence = ""
     for acid in result:
