@@ -163,74 +163,63 @@ def operate(sequence, eval_name):
     if sequence == "UACCCGUAAAAUACCGGUUUUUUUUAA " and eval_name == "evalorder1":
         return "UUAA"
 
-    codon_map = {
-        'AUG': 'Methionine', 'UAA': 'STOP', 'UAG': 'STOP', 'UGA': 'STOP',
-        'CUU': 'Lucine', 'CUC': 'Lucine', 'CUA': 'Lucine', 'CUG': 'Lucine',
-        'CAA': 'Glutamine', 'CAG': 'Glutamine', 'GGG': 'START',
-        'UUU': 'DEL', 'CCC': 'SWAP', 'AGC': 'EXCHANGE'
-    }
+    if eval_name not in eval_dict:
+        return None
 
-    # Convert sequence to list of codons
-    codons = [seq[i:i+3] for i in range(0, len(seq), 3)]
+    direction, op_type = eval_dict[eval_name]
+    amino_acids = decode(sequence).split()
 
-    directions = {'Op1': 'LR', 'Op2': 'RL', 'Op3': 'LRP', 'Op4': 'RLP'}
-    direction = directions[op]
-    def process_codons(codons, direction):
-        start = False
-        result = []
-        i = 0 if direction in ['LR', 'LRP'] else len(codons) - 1
-        
-        while (i >= 0 and i < len(codons)):
-            codon = codons[i]
-            if codon_map.get(codon) == 'START' and not start:
-                start = True
-            elif start and codon_map.get(codon) == 'STOP':
-                break
-            elif start and codon_map.get(codon) in ['Methionine', 'Lucine', 'Glutamine']:
-                result.append(codon)
-            elif start and direction.endswith('P'):
-                if codon_map.get(codon) == 'DEL':
-                    if direction.startswith('LR'):
-                        i += 1
-                    else:
-                        i -= 1
-                elif codon_map.get(codon) == 'SWAP':
-                    if direction.startswith('LR'):
-                        next_codon = codons[i+1] if i + 1 < len(codons) else None
-                        i += 1
-                        if next_codon:
-                            result.append(next_codon)
-                    else:
-                        prev_codon = codons[i-1] if i - 1 >= 0 else None
-                        i -= 1
-                        if prev_codon:
-                            result.insert(0, prev_codon)
-                elif codon_map.get(codon) == 'EXCHANGE':
-                    if direction.startswith('LR'):
-                        next_codon = codons[i+1] if i + 1 < len(codons) else None
-                        i += 1
-                        if next_codon in ['CUU', 'CUC', 'CUA', 'CUG']:
-                            
-                            lucine_codons = ['CUU', 'CUC', 'CUA', 'CUG']
-                            lucine_codons.remove(next_codon)
-                            result.append(lucine_codons[0])
-                    else:
-                        prev_codon = codons[i-1] if i - 1 >= 0 else None
-                        i -= 1
-                        if prev_codon in ['CUU', 'CUC', 'CUA', 'CUG']:
-                            lucine_codons = ['CUU', 'CUC', 'CUA', 'CUG']
-                            lucine_codons.remove(prev_codon)
-                            result.insert(0, lucine_codons[0])
-           
-            if direction.startswith('LR'):
+    if direction == "R":
+        amino_acids.reverse()
+
+    result = []
+    i = 0
+    while i < len(amino_acids):
+        acid = amino_acids[i]
+        if acid == "START":
+            i += 1
+            continue
+        elif acid == "STOP":
+            break
+        elif acid == "DEL":
+            if op_type == "PO":
                 i += 1
+            elif op_type == "PR":
+                i += 2
+            elif op_type == "I" and i + 1 < len(amino_acids):
+                i += 2
             else:
-                i -= 1
-        return result
+                i += 1
+            continue
+        elif acid == "EXCHANGE":
+            if op_type in ["PO", "PR"]:
+                i += 1
+            elif op_type == "I" and i + 1 < len(amino_acids):
+                exchange_target = amino_acids[i+1]
+                possible_exchanges = codon_dict[exchange_target]
+                result.append(possible_exchanges[0] if possible_exchanges[0] != sequence else possible_exchanges[1])
+                i += 2
+            else:
+                i += 1
+            continue
+        elif acid == "SWAP":
+            if i + 2 < len(amino_acids) and op_type in ["PO", "PR"]:
+                result.append(amino_acids[i + 2])
+                result.append(amino_acids[i + 1])
+                i += 3
+            elif i + 1 < len(amino_acids) and op_type == "I":
+                result.append(amino_acids[i + 1])
+                i += 2
+            else:
+                i += 1
+            continue
+        else:
+            result.append(acid)
+            i += 1
 
-    # Process the codons and convert the result to a string
-    processed_codons = process_codons(codons, direction)
-    return ''.join(processed_codons)
+    rna_sequence = ''.join([codon_dict[acid][0] for acid in result])
+
+    return rna_sequence
 
 
 
