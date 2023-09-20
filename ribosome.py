@@ -163,7 +163,7 @@ def operate(sequence, eval_name):
     if sequence == "UACCCGUAAAAUACCGGUUUUUUUUAA " and eval_name == "evalorder1":
         return "UUAA"
 
-if eval_name not in eval_dict:
+    if eval_name not in eval_dict:
         return None
 
     direction, op_type = eval_dict[eval_name]
