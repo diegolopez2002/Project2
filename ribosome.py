@@ -163,44 +163,74 @@ def operate(sequence, eval_name):
     if sequence == "UACCCGUAAAAUACCGGUUUUUUUUAA " and eval_name == "evalorder1":
         return "UUAA"
 
-    if not eval_order:
-        return None
+    codon_map = {
+        'AUG': 'Methionine', 'UAA': 'STOP', 'UAG': 'STOP', 'UGA': 'STOP',
+        'CUU': 'Lucine', 'CUC': 'Lucine', 'CUA': 'Lucine', 'CUG': 'Lucine',
+        'CAA': 'Glutamine', 'CAG': 'Glutamine', 'GGG': 'START',
+        'UUU': 'DEL', 'CCC': 'SWAP', 'AGC': 'EXCHANGE'
+    }
 
-    start, result = False, []
-    operations_stack = []
+    # Convert sequence to list of codons
+    codons = [seq[i:i+3] for i in range(0, len(seq), 3)]
 
-    if eval_order['direction'] == 'RL':
-        translated_seq = translated_seq[::-1]
-
-    for codon in translated_seq:
-        if codon == "AUG":
-            start = True
-            continue
-        if codon == "UAG":
-            break
-        if start:
-            if codon in ["DEL", "EXCHANGE", "SWAP"]:
-                operations_stack.append(codon)
+    directions = {'Op1': 'LR', 'Op2': 'RL', 'Op3': 'LRP', 'Op4': 'RLP'}
+    direction = directions[op]
+    def process_codons(codons, direction):
+        start = False
+        result = []
+        i = 0 if direction in ['LR', 'LRP'] else len(codons) - 1
+        
+        while (i >= 0 and i < len(codons)):
+            codon = codons[i]
+            if codon_map.get(codon) == 'START' and not start:
+                start = True
+            elif start and codon_map.get(codon) == 'STOP':
+                break
+            elif start and codon_map.get(codon) in ['Methionine', 'Lucine', 'Glutamine']:
+                result.append(codon)
+            elif start and direction.endswith('P'):
+                if codon_map.get(codon) == 'DEL':
+                    if direction.startswith('LR'):
+                        i += 1
+                    else:
+                        i -= 1
+                elif codon_map.get(codon) == 'SWAP':
+                    if direction.startswith('LR'):
+                        next_codon = codons[i+1] if i + 1 < len(codons) else None
+                        i += 1
+                        if next_codon:
+                            result.append(next_codon)
+                    else:
+                        prev_codon = codons[i-1] if i - 1 >= 0 else None
+                        i -= 1
+                        if prev_codon:
+                            result.insert(0, prev_codon)
+                elif codon_map.get(codon) == 'EXCHANGE':
+                    if direction.startswith('LR'):
+                        next_codon = codons[i+1] if i + 1 < len(codons) else None
+                        i += 1
+                        if next_codon in ['CUU', 'CUC', 'CUA', 'CUG']:
+                            
+                            lucine_codons = ['CUU', 'CUC', 'CUA', 'CUG']
+                            lucine_codons.remove(next_codon)
+                            result.append(lucine_codons[0])
+                    else:
+                        prev_codon = codons[i-1] if i - 1 >= 0 else None
+                        i -= 1
+                        if prev_codon in ['CUU', 'CUC', 'CUA', 'CUG']:
+                            lucine_codons = ['CUU', 'CUC', 'CUA', 'CUG']
+                            lucine_codons.remove(prev_codon)
+                            result.insert(0, lucine_codons[0])
+           
+            if direction.startswith('LR'):
+                i += 1
             else:
-                if operations_stack:
-                    operation = operations_stack.pop()
-                    if operation == "DEL":
-                        continue
-                    elif operation == "EXCHANGE":
-                        result.append(choice(AMINO_ACIDS[codon]))
-                    elif operation == "SWAP":
-                        if result:
-                            previous_codon = result.pop()
-                            result.extend([codon, previous_codon])
-                        else:
-                            result.append(codon)
-                else:
-                    result.append(codon)
+                i -= 1
+        return result
 
-    if eval_order['direction'] == 'RL':
-        result = result[::-1]
-
-    return ''.join(result)
+    # Process the codons and convert the result to a string
+    processed_codons = process_codons(codons, direction)
+    return ''.join(processed_codons)
 
 
 
