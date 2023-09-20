@@ -164,7 +164,7 @@ def operate(sequence, eval_name):
         return "UUAA"
 
 
-     codon_to_amino = {
+    codon_to_amino = {
         "AUG": "Methionine",
         "CUU": "Lucine",
         "CUC": "Lucine",
@@ -177,8 +177,7 @@ def operate(sequence, eval_name):
         "AGC": "EXCHANGE",
         "CCC": "SWAP"
     }
-
-    # Update eval_name to its corresponding (direction, notation) tuple
+    
     evals = {
         "evalorder1": ("L", "PR"),
         "evalorder2": ("R", "PO"),
